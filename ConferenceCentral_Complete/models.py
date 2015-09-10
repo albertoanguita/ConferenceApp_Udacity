@@ -112,23 +112,32 @@ class ConferenceQueryForms(messages.Message):
 
 class Session(ndb.Model):
     """Session -- Session object"""
-    name          = ndb.StringProperty(required=True)
-    highlights    = ndb.StringProperty(repeated=True)
-    speakerId     = ndb.StringProperty()
-    duration      = ndb.IntegerProperty()
-    typeOfSession = ndb.StringProperty()
-    date          = ndb.DateProperty()
-    startTime     = ndb.TimeProperty()
-    websafeConferenceKey = ndb.StringProperty()
 
+    # name of the session. Must be unique across all sessions. Its mandatory
+    name          = ndb.StringProperty(required=True)
+    # list of highlights of the session
+    highlights    = ndb.StringProperty(repeated=True)
+    # id (email) of the speaker in the session. There is one and only one speaker per session
+    speakerId     = ndb.StringProperty()
+    # duration in minutes of the session
+    duration      = ndb.IntegerProperty()
+    # type of the session (e.g. 'workshop', 'lecture'...)
+    typeOfSession = ndb.StringProperty()
+    # date at which the session takes place
+    date          = ndb.DateProperty()
+    # starting time of the session
+    startTime     = ndb.TimeProperty()
+    # equality definition for sessions (used to compute the intersection of two session lists)
     def __eq__(self, other):
         return self.name == other.name
 
 
 class SessionMiniForm(messages.Message):
-    """ConferenceForm -- Conference outbound form message"""
+    """SessionMiniForm -- message for creating sessions"""
+
     name          = messages.StringField(1)
     highlights    = messages.StringField(2, repeated=True)
+    # the form stores the complete speaker information, instead of just the id
     speakerName   = messages.StringField(3)
     speakerEmail  = messages.StringField(4)
     duration      = messages.IntegerField(5)
@@ -136,28 +145,41 @@ class SessionMiniForm(messages.Message):
     date          = messages.StringField(7)
     startTime     = messages.StringField(8)
 
+
 class SessionForm(messages.Message):
-    """ConferenceForm -- Conference outbound form message"""
+    """SessionForm -- Session outbound form message"""
+
     name          = messages.StringField(1)
     highlights    = messages.StringField(2, repeated=True)
+    # the form stores the complete speaker information, instead of just the id
     speakerName   = messages.StringField(3)
     speakerEmail  = messages.StringField(4)
     duration      = messages.IntegerField(5)
     typeOfSession = messages.StringField(6)
     date          = messages.StringField(7)
     startTime     = messages.StringField(8)
+    # key of the conference hosting this session
     websafeConferenceKey = messages.StringField(9)
+    # key of the session itself
     websafeSessionKey = messages.StringField(10)
 
 class SessionForms(messages.Message):
     """SessionForms -- multiple Session outbound form message"""
+
+    # store a list of session forms
     items = messages.MessageField(SessionForm, 1, repeated=True)
 
 class Speaker(ndb.Model):
     """Speaker -- Speaker object"""
+
+    # name of the speaker
     name  = ndb.StringProperty(required=True)
+    # email of the speaker. Uniquely identifies the speaker
     email = ndb.StringProperty(required=True)
 
 class SpeakerForm(messages.Message):
+    """SpeakerForm -- Speaker outbound form message"""
+
+    # fields resemble those of kind Speaker
     name  = messages.StringField(1)
     email = messages.StringField(2)
