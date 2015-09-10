@@ -100,7 +100,7 @@ Next, the requested endpoints are implemented.
 `getSessionsBySpeaker(speaker)` **(conference.py, 656)**: a simple query filtering the speakerId is performed. This id must match the email value submitted in the request.
 
 
-* ** Design choices**
+* **Design choices**
 
 I decided to create a session kind and a separate speaker kind to be able to provide detailed information about speakers. By storing the speaker email under the speakerId field of Session, we ensure that the session entities have access to their corresponding speaker entity. Several sessions can share the speaker, simply by storing the same email value in their speakerId field. The speaker entity could be expanded with additional fields that provide further information about the speaker.
 
