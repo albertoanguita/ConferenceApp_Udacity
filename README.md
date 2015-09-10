@@ -60,7 +60,7 @@ All basic and optional features have been implemented. The text below describes 
 
 This task involved the definition of kinds and ProtoRPC messages in models.py and endpoints in conference.py for generating, storing and retrieving entities of those kinds.
 
-1. **Kind definition**
+* **Kind definition**
 
 Two kinds were defined: **Session (models.py, 113)** and **Speaker (models.py, 172)**. Session defines the information of a single conference session, while Speaker identifies one person that will speak in a session.
 
@@ -70,7 +70,7 @@ In addition, the speaker email, which uniquely identifies speakers, is stored.
 The Speaker kind contains two attributes: name and email. Email acts as id for generating entity keys.
 
 
-2. **ProtoRPC messages definition**
+* **ProtoRPC messages definition**
 
 For session, two different protoRPC messages are defined: SessionMiniForm **(models.py, 135)** and SessionForm **(models.py, 149)**. 
 The former is used to submit data of new sessions (does not include conference key nor sesssion key). 
@@ -79,7 +79,7 @@ The latter is used as return message when retrieving sessions from the database.
 For speaker, one protoRPC message is defined: SpeakerForm **(models.py, 180)**. It contains the same fields as its equivalent kind: name and email.
 
 
-3. **Endpoints definition**
+* **Endpoints definition**
 
 First, two helper methods were defined: `_copySessionToForm(session)` **(conference.py, 458)**, and `_createSessionObject(request, websafeConferenceKey)` **(conference.py, 477)**. 
 
@@ -100,7 +100,7 @@ Next, the requested endpoints are implemented.
 `getSessionsBySpeaker(speaker)` **(conference.py, 656)**: a simple query filtering the speakerId is performed. This id must match the email value submitted in the request.
 
 
-4. ** Design choices**
+* ** Design choices**
 
 I decided to create a session kind and a separate speaker kind to be able to provide detailed information about speakers. By storing the speaker email under the speakerId field of Session, we ensure that the session entities have access to their corresponding speaker entity. Several sessions can share the speaker, simply by storing the same email value in their speakerId field. The speaker entity could be expanded with additional fields that provide further information about the speaker.
 
