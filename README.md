@@ -17,7 +17,7 @@ The project extends the conference organization app provided by the instructors.
 
 The app has been deployed in Google App Engine and tested through its backend services.
 
-app id: **myconferenceapp-1055**
+my app id: **myconferenceapp-1055**
 
 
 ## Running the application
