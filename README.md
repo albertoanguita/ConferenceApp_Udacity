@@ -154,7 +154,7 @@ While this solution is somewhat more elegant from the design point of view (filt
 
 ### Task 4: Add a Task
 
-The endpoint `createSession` (598) was modified to create a task when it detects that there is a new featured speaker. 
+The endpoint `createSession` was modified **(conference.py, 598)** to create a task when it detects that there is a new featured speaker. 
 This condition is met simply when the speaker was already present in an existing session of the same conference.
 
 When the code detects a featured speaker, it generates a new task and adds it to the default task queue. The task implementation is 
