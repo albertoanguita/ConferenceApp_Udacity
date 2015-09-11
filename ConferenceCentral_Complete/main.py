@@ -42,7 +42,7 @@ class SendConfirmationEmailHandler(webapp2.RequestHandler):
 class SetFeaturedSpeaker(webapp2.RequestHandler):
     def post(self):
         """Send email confirming Conference creation."""
-        memcache.set(self.request.get('key'), self.request.get('announcement'))
+        memcache.set(self.request.get('key'), self.request.get('featured_speaker_message'))
 
 
 app = webapp2.WSGIApplication([

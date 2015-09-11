@@ -509,7 +509,7 @@ class ConferenceApi(remote.Service):
             raise endpoints.BadRequestException("Speaker email field required")
 
         # check that there is no other session with the same name
-        sessions = Session.query(Session.name == request.name)
+        sessions = Session.query(Session.name == request.name).count()
         if sessions:
             raise endpoints.BadRequestException("There is already a session named %s" % request.name)
 
@@ -540,6 +540,7 @@ class ConferenceApi(remote.Service):
         # delete extra fields from data
         del data['speakerName']
         del data['speakerEmail']
+        del data['websafeConferenceKey']
 
         # add default values for  missing fields
         # (both data model & outbound Message)
@@ -601,7 +602,8 @@ class ConferenceApi(remote.Service):
         # retrieve sessions of the same speaker, to check featured speaker
         sessions = Session \
             .query(ancestor=ndb.Key(urlsafe=request.websafeConferenceKey)) \
-            .filter(Session.speakerId == request.speakerEmail)
+            .filter(Session.speakerId == request.speakerEmail)\
+            .count()
 
         featuredSpeaker = False
         if sessions:
@@ -614,17 +616,16 @@ class ConferenceApi(remote.Service):
                                             request.websafeConferenceKey)
         if featuredSpeaker:
             # add featured speaker to memcache using a task
-            speaker = Speaker.query(Speaker.email==request.speakerEmail)
-            announcement = FEATURED_SPEAKER_MESSAGE % (speaker.get().name)
+            speaker = Speaker.query(Speaker.email==request.speakerEmail).get()
+            featured_speaker_message = FEATURED_SPEAKER_MESSAGE % speaker.name
             taskqueue.add(
-                params={'key': MEMCACHE_ANNOUNCEMENTS_KEY, 'announcement': announcement},
-                url='/tasks/set_featured_speaker'
-            )
+                params={'key': MEMCACHE_FEATURED_SPEAKER_KEY, 'featured_speaker_message': featured_speaker_message},
+                url='/tasks/set_featured_speaker')
 
         return self._copySessionToForm(session)
 
     @endpoints.method(SESSIONS_GET_REQUEST, SessionForms,
-                      path='sessions/{websafeConferenceKey}',
+                      path='session/{websafeConferenceKey}',
                       http_method='GET', name='getConferenceSessions')
     def getConferenceSessions(self, request):
         """Query all sessions in a conference"""
